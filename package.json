@@ -1,14 +1,17 @@
 {
   "name": "clean-react",
+  "author": "Lucian AF",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "test": "jest",
-    "prepare": "husky install"
-  },
-  "author": "Lucian AF",
   "license": "ISC",
+  "scripts": {
+    "prepare": "husky install",
+    "test": "jest --passWithNoTests",
+    "test:watch": "npm test -- --watch",
+    "test:staged": "npm test -- --findRelatedTests",
+    "test:ci": "npm test -- --coverage"
+  },
   "devDependencies": {
     "@types/jest": "^29.5.2",
     "@types/node": "^20.3.3",
