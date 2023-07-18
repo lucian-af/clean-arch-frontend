@@ -4,6 +4,7 @@ import { mockAuthentication } from '@domain/test/mock-authentication';
 import { HttpPostClientSpy } from '@tests/data/mocks/mock-http-client';
 import { HttpStatusCode } from '@data/protocols/http/http-response';
 import { InvalidCredentialsError } from '@domain/errors/invalid-credentials-error';
+import { UnexpectedError } from '@domain/errors/unexpected-error';
 
 type FixtureTypes = {
 	httpPostClient: HttpPostClientSpy;
@@ -35,7 +36,7 @@ describe('RemoteAuthentication', () => {
 		expect(httpPostClient.body).toEqual(params);
 	});
 	
-	test('Deve retornar "InvalidCredentialError" se HttpPostClient retornar statusCode 401 ', async () => {			
+	test('Deve retornar "InvalidCredentialError" se HttpPostClient retornar statusCode 401', async () => {			
 		const { httpPostClient, remoteAuthentication } = fixtureAuthentication();
 		httpPostClient.response = {
 			statusCode: HttpStatusCode.unauthorized
@@ -44,5 +45,38 @@ describe('RemoteAuthentication', () => {
 		const request = remoteAuthentication.auth(params);
 		await expect(request).rejects.toThrow(new InvalidCredentialsError());
 		await expect(request).rejects.toThrow('Credenciais inválidas.');
+	});
+	
+	test('Deve retornar "UnexpectedError" se HttpPostClient retornar statusCode 400', async () => {			
+		const { httpPostClient, remoteAuthentication } = fixtureAuthentication();
+		httpPostClient.response = {
+			statusCode: HttpStatusCode.badRequest
+		};
+		const params = mockAuthentication();
+		const request = remoteAuthentication.auth(params);
+		await expect(request).rejects.toThrow(new UnexpectedError());
+		await expect(request).rejects.toThrow('Algo de errado aconteceu. Tente novamente.');
+	});
+	
+	test('Deve retornar "UnexpectedError" se HttpPostClient retornar statusCode 404', async () => {			
+		const { httpPostClient, remoteAuthentication } = fixtureAuthentication();
+		httpPostClient.response = {
+			statusCode: HttpStatusCode.notFound
+		};
+		const params = mockAuthentication();
+		const request = remoteAuthentication.auth(params);
+		await expect(request).rejects.toThrow(new UnexpectedError());
+		await expect(request).rejects.toThrow('Algo de errado aconteceu. Tente novamente.');
+	});
+	
+	test('Deve retornar "UnexpectedError" se HttpPostClient retornar statusCode 500', async () => {			
+		const { httpPostClient, remoteAuthentication } = fixtureAuthentication();
+		httpPostClient.response = {
+			statusCode: HttpStatusCode.internalServerError
+		};
+		const params = mockAuthentication();
+		const request = remoteAuthentication.auth(params);
+		await expect(request).rejects.toThrow(new UnexpectedError());
+		await expect(request).rejects.toThrow('Algo de errado aconteceu. Tente novamente.');
 	});
 });
