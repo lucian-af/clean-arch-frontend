@@ -5,14 +5,16 @@ import { HttpPostClientSpy } from '@tests/data/mocks/mock-http-client';
 import { HttpStatusCode } from '@data/protocols/http/http-response';
 import { InvalidCredentialsError } from '@domain/errors/invalid-credentials-error';
 import { UnexpectedError } from '@domain/errors/unexpected-error';
+import { AuthenticationParams } from '@domain/usecases/authentication';
+import { AccountModel } from '@domain/models/account-model';
 
 type FixtureTypes = {
-	httpPostClient: HttpPostClientSpy;
+	httpPostClient: HttpPostClientSpy<AuthenticationParams, AccountModel>;
 	remoteAuthentication: RemoteAuthentication;
 }
 
 const fixtureAuthentication = (url: string = faker.internet.url()): FixtureTypes => {	
-	const httpPostClient = new HttpPostClientSpy();
+	const httpPostClient = new HttpPostClientSpy<AuthenticationParams, AccountModel>();
 	const remoteAuthentication = new RemoteAuthentication(url, httpPostClient);
 
 	return {		
