@@ -1,12 +1,11 @@
-import { RemoteAuthentication } from '@data/usecases/remote-authentication';
+import { RemoteAuthentication } from '@data/usecases';
 import { faker } from '@faker-js/faker';
-import { mockAccountModel, mockAuthentication } from '@domain/test/mock-account';
-import { HttpPostClientSpy } from '@tests/data/mocks/mock-http-client';
-import { HttpStatusCode } from '@data/protocols/http/http-response';
-import { InvalidCredentialsError } from '@domain/errors/invalid-credentials-error';
-import { UnexpectedError } from '@domain/errors/unexpected-error';
-import { AuthenticationParams } from '@domain/usecases/authentication';
-import { AccountModel } from '@domain/models/account-model';
+import { mockAccountModel, mockAuthentication } from '@tests/domain/mocks';
+import { HttpPostClientSpy } from '@tests/data/mocks';
+import { HttpStatusCode } from '@data/protocols/http';
+import { InvalidCredentialsError, UnexpectedError } from '@domain/errors';
+import { AuthenticationParams } from '@domain/usecases';
+import { AccountModel } from '@domain/models';
 
 type FixtureTypes = {
 	httpPostClient: HttpPostClientSpy<AuthenticationParams, AccountModel>;
