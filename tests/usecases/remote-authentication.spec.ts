@@ -1,6 +1,6 @@
 import { RemoteAuthentication } from '@data/usecases/remote-authentication';
 import { faker } from '@faker-js/faker';
-import { mockAuthentication } from '@domain/test/mock-authentication';
+import { mockAccountModel, mockAuthentication } from '@domain/test/mock-account';
 import { HttpPostClientSpy } from '@tests/data/mocks/mock-http-client';
 import { HttpStatusCode } from '@data/protocols/http/http-response';
 import { InvalidCredentialsError } from '@domain/errors/invalid-credentials-error';
@@ -80,5 +80,16 @@ describe('RemoteAuthentication', () => {
 		const request = remoteAuthentication.auth(params);
 		await expect(request).rejects.toThrow(new UnexpectedError());
 		await expect(request).rejects.toThrow('Algo de errado aconteceu. Tente novamente.');
+	});
+	
+	test('Deve retornar AccountModel se HttpPostClient retornar statusCode 200', async () => {			
+		const { httpPostClient, remoteAuthentication } = fixtureAuthentication();
+		const httpResponse: AccountModel = mockAccountModel();
+		httpPostClient.response = {
+			statusCode: HttpStatusCode.ok,
+			body: httpResponse
+		};		
+		const request = await remoteAuthentication.auth(mockAuthentication());
+		expect(request).toEqual(httpResponse);
 	});
 });
