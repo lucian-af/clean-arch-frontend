@@ -1,39 +1,37 @@
-import { HttpPostParams } from '@data/protocols/http';
 import { AxiosHttpAdapter } from '@infra/http/axios-http-adapter';
-import { faker } from '@faker-js/faker';
 import axios from 'axios';
+import { mockAxios } from '@tests/infra/mocks/mock-axios';
+import { mockPostRequest } from '@tests/infra/mocks/mock-http';
 
 jest.mock('axios');
-const mockAxios = axios as jest.Mocked<typeof axios>;
-const mockAxiosResult = {
-	data: faker.helpers.objectValue({nome: 'teste'}),
-	status: faker.number.int({min: 200, max: 299})
-};
-mockAxios.post.mockResolvedValue(mockAxiosResult);
 
-const mockHttpClient = () => {
-	return new AxiosHttpAdapter();
-};
+type MockHttpClientTypes = {
+	httpAdapter: AxiosHttpAdapter,
+	mockAxios: jest.Mocked<typeof axios>
+}
 
-const mockPostRequest = (): HttpPostParams<any> => ({
-	url: faker.internet.url(),
-	body: faker.helpers.objectValue({nome: 'teste'})
-});
+const mockHttpClient = (): MockHttpClientTypes => {
+	const httpAdapter = new AxiosHttpAdapter();
+	const mockedAxios = mockAxios();
+
+	return {
+		httpAdapter,
+		mockAxios: mockedAxios
+	};
+};
 
 describe('AxiosHttpAdapter', () => {
 	test('Deve executar http post com axios e URL e body corretos', async () => {
-		const httpClient = mockHttpClient();		
+		const {httpAdapter, mockAxios} = mockHttpClient();		
 		const request = mockPostRequest();
-		await httpClient.post(request);
+		await httpAdapter.post(request);
 		expect(mockAxios.post).toHaveBeenCalledWith(request.url, request.body);
 	});	
 	
 	test('Deve retornar body e statusCode de sucesso', async () => {
-		const httpClient = mockHttpClient();		
-		const httpResponse = await httpClient.post(mockPostRequest());
-		expect(httpResponse).toEqual({
-			statusCode: mockAxiosResult.status,
-			body: mockAxiosResult.data
-		});
+		const {httpAdapter, mockAxios} = mockHttpClient();		
+		const promiseResponse = httpAdapter.post(mockPostRequest());
+		const promiseResponseResult = mockAxios.post.mock.results[0].value;
+		expect(promiseResponse).toEqual(promiseResponseResult);
 	});	
 });
