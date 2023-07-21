@@ -1,27 +1,27 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
+    "useDefineForClassFields": true,
     "lib": [
       "DOM",
       "DOM.Iterable",
       "ESNext"
     ],
-    "esModuleInterop": true,
     "module": "ESNext",
-    "moduleResolution": "node",
-    "jsx": "react",
+    "skipLibCheck": true,
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "jsx": "react-jsx",
     "rootDirs": [
       "src",
       "tests"
     ],
     "baseUrl": "./",
     "allowJs": true,
-    "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": false,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-    "noEmit": true,
     "paths": {
       "@data/*": [
         "./src/data/*"
@@ -39,6 +39,11 @@
   },
   "include": [
     "./src",
-    "./tests"
+    "./tests",
+  ],
+  "references": [
+    {
+      "path": "./tsconfig.node.json"
+    }
   ]
 }
